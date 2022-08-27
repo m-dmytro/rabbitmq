@@ -24,6 +24,9 @@
       "name":"hw-task"
     },
     {
+      "name":"hw-task-FailedAndDeadletter"
+    },
+    {
       "name":"amqp-task"
     },
     {

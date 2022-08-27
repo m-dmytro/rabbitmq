@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.logging.Logger;
+import java.util.stream.IntStream;
 
 @RestController
 @RequestMapping("/api/v1/send")
@@ -30,12 +31,16 @@ public class PubController {
                         .setHeader(ROUTING_KEY_HEADER, "routing-queue-1")
                         .build()
         );
-        streamBridge.send("source-out-0",
-                MessageBuilder
-                        .withPayload(message)
-                        .setHeader(ROUTING_KEY_HEADER, "routing-queue-2")
-                        .build()
-        );
+
+        IntStream.range(0, 7).forEach(i -> {
+            streamBridge.send("source-out-0",
+                    MessageBuilder
+                            .withPayload(i + ": " + message)
+                            .setHeader(ROUTING_KEY_HEADER, "routing-queue-2")
+                            .build()
+            );
+        });
+
         streamBridge.send("source-out-0",
                 MessageBuilder
                         .withPayload(message)
