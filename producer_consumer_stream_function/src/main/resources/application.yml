@@ -1,0 +1,33 @@
+server:
+  port: 8440
+
+spring:
+  rabbitmq:
+    virtual-host: stream-function-task
+  cloud:
+    stream:
+      function:
+        definition: queue1Sink;queue2Sink
+      bindings:
+        queue1Sink-in-0:
+          destination: stream-exchange
+          group: stream-queue1
+        queue2Sink-in-0:
+          destination: stream-exchange
+          group: stream-queue2
+        source-out-0:
+          destination: stream-exchange
+      rabbit:
+        bindings:
+          queue1Sink-in-0:
+            consumer:
+              queueNameGroupOnly: true
+              bindingRoutingKey: routing-queue-1
+          queue2Sink-in-0:
+            consumer:
+              queueNameGroupOnly: true
+              bindingRoutingKey: routing-queue-2
+          source-out-0:
+            producer:
+              exchangeType: topic
+              routingKeyExpression: headers['myRoutingKey']

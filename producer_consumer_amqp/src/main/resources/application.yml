@@ -1,0 +1,6 @@
+server:
+  port: 8440
+
+spring:
+  rabbitmq:
+    virtual-host: amqp-task
