@@ -1,0 +1,72 @@
+server:
+  port: 8440
+
+republish: true
+
+spring:
+  rabbitmq:
+    virtual-host: hw-task
+  cloud:
+    stream:
+      function:
+        definition: queue1Sink;queue2Sink;queue3Sink
+      bindings:
+        queue1Sink-in-0:
+          destination: stream-exchange
+          group: stream-queue1
+          consumer:
+            # disable in-process retry, default if 3
+            max-attempts: 1
+        queue2Sink-in-0:
+          destination: stream-exchange
+          group: stream-queue2
+          consumer:
+            # disable in-process retry, default if 3
+            max-attempts: 1
+        queue3Sink-in-0:
+          destination: stream-exchange
+          group: stream-queue3
+          consumer:
+            # disable in-process retry, default if 3
+            max-attempts: 1
+        source-out-0:
+          destination: stream-exchange
+      rabbit:
+        bindings:
+          queue1Sink-in-0:
+            consumer:
+              queueNameGroupOnly: true
+              bindingRoutingKey: routing-queue-1
+              # https://docs.spring.io/spring-cloud-stream-binder-rabbit/docs/current/reference/html/spring-cloud-stream-binder-rabbit.html#_retry_with_the_rabbitmq_binder
+              autoBindDlq: true
+              deadLetterExchange: retry-exchange
+              deadLetterQueueName: retry-queue
+              dlq-ttl: 5000
+              republishToDlq: ${republish}
+              dlqDeadLetterExchange:
+          queue2Sink-in-0:
+            consumer:
+              queueNameGroupOnly: true
+              bindingRoutingKey: routing-queue-2
+              # https://docs.spring.io/spring-cloud-stream-binder-rabbit/docs/current/reference/html/spring-cloud-stream-binder-rabbit.html#_retry_with_the_rabbitmq_binder
+              autoBindDlq: true
+              deadLetterExchange: retry-exchange
+              deadLetterQueueName: retry-queue
+              dlq-ttl: 5000
+              republishToDlq: ${republish}
+              dlqDeadLetterExchange:
+          queue3Sink-in-0:
+            consumer:
+              queueNameGroupOnly: true
+              bindingRoutingKey: routing-queue-3
+              # https://docs.spring.io/spring-cloud-stream-binder-rabbit/docs/current/reference/html/spring-cloud-stream-binder-rabbit.html#_retry_with_the_rabbitmq_binder
+              autoBindDlq: true
+              deadLetterExchange: retry-exchange
+              deadLetterQueueName: retry-queue
+              dlq-ttl: 5000
+              republishToDlq: ${republish}
+              dlqDeadLetterExchange:
+          source-out-0:
+            producer:
+              exchangeType: topic
+              routingKeyExpression: headers['myRoutingKey']
