@@ -2,6 +2,10 @@ server:
   port: 8440
 
 spring:
+  jpa:
+    show-sql: false
+    defer-datasource-initialization: true
+
   rabbitmq:
     virtual-host: hw-task-FailedAndDeadletter
   cloud:
